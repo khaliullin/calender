@@ -94,4 +94,4 @@ def register_user(dp: Dispatcher):
     dp.register_message_handler(user_start, commands=["start"], state="*")
     dp.register_message_handler(user_help, commands=["help"], state="*")
     dp.register_message_handler(user_fill_url, state=Form.url, content_types=types.ContentTypes.TEXT)
-    dp.register_message_handler(user_calc)
+    dp.register_message_handler(user_calc, state="*", content_types=types.ContentTypes.TEXT)

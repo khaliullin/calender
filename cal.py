@@ -1,16 +1,21 @@
+import logging
 from _datetime import datetime
 from collections import defaultdict
 
 import requests
 from icalendar import Calendar
 
+logger = logging.getLogger(__name__)
+
 
 def calc_events(url, start_dt, end_dt=None):
     if url[:6] == 'webcal':
         url = 'https' + url[6:]
 
+    logger.debug(url)
     resp = requests.get(url)
     cal = Calendar().from_ical(resp.text)
+    logger.info(f'status: {resp.status_code} | len: {len(resp.text)}')
 
     if not end_dt:
         end_dt = datetime.now().replace(tzinfo=None)
@@ -43,9 +48,9 @@ def calc_events(url, start_dt, end_dt=None):
         minutes_all += total_min
 
         reply_text += f'<b>{event_name}</b> ({total_min} мин)\n{"; ".join(line)}\n\n'
-        print(event_name, *len_date)
 
     reply_text += f'--------------------------'
     reply_text += f'\n<b>Итого:</b> {minutes_all} мин. за период с {start_dt.strftime("%d.%m")} по {end_dt.strftime("%d.%m")}'
 
+    logger.debug(f'minutes: {minutes_all}')
     return reply_text
